@@ -34,8 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (session != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder:
-              (context) => ProfileScreen(auth_service: widget.auth_service),
+          builder: (context) =>
+              ProfileScreen(auth_service: widget.auth_service),
         ),
       );
     }
@@ -51,8 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigate to profile if signed in
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder:
-                  (context) => ProfileScreen(auth_service: widget.auth_service),
+              builder: (context) =>
+                  ProfileScreen(auth_service: widget.auth_service),
             ),
           );
         } else if (event == AuthChangeEvent.signedOut) {
@@ -61,9 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // Navigate to profile if signed in
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder:
-                  (context) =>
-                      ForgotPassword(auth_service: widget.auth_service),
+              builder: (context) =>
+                  ForgotPassword(auth_service: widget.auth_service),
             ),
           );
         }
@@ -89,30 +88,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text("Reset Password"),
-            content: TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Enter your email"),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () async {
-                  if (emailController.text.isNotEmpty) {
-                    await _sendPasswordReset(emailController.text);
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text("Send"),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text("Reset Password"),
+        content: TextField(
+          controller: emailController,
+          decoration: const InputDecoration(labelText: "Enter your email"),
+          keyboardType: TextInputType.emailAddress,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
           ),
+          TextButton(
+            onPressed: () async {
+              if (emailController.text.isNotEmpty) {
+                await _sendPasswordReset(emailController.text);
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Send"),
+          ),
+        ],
+      ),
     );
   }
 
@@ -142,10 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
     final passwordController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: background_color,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(''),
-        backgroundColor: background_color, // Match app bar to background
+        backgroundColor: Theme.of(context)
+            .colorScheme
+            .surface, // Match app bar to background
         elevation: 0,
       ),
       body: LayoutBuilder(
@@ -252,16 +252,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Signup button
                       TextButton(
-                        onPressed:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => SignupScreen(
-                                      auth_service: widget.auth_service,
-                                    ),
-                              ),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignupScreen(
+                              auth_service: widget.auth_service,
                             ),
+                          ),
+                        ),
                         child: RichText(
                           text: TextSpan(
                             style: const TextStyle(

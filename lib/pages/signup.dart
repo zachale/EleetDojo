@@ -38,11 +38,13 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: background_color,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Sign Up'),
-        foregroundColor: primary_color,
-        backgroundColor: background_color, // Match app bar to background
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context)
+            .colorScheme
+            .surface, // Match app bar to background
         elevation: 0,
       ),
       body: Padding(
