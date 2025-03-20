@@ -4,6 +4,7 @@ import 'package:eleetdojo/pages/error_page.dart';
 import 'package:eleetdojo/pages/map_topic_page.dart';
 import 'package:eleetdojo/auth_service.dart';
 import 'package:eleetdojo/pages/login.dart';
+import 'package:eleetdojo/pages/quiz_page.dart';
 import 'package:eleetdojo/pages/sensei.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -75,10 +76,7 @@ class MyApp extends StatelessWidget {
             path: '/dojo',
             builder: (context, state) => DojoPage(auth_service: auth_service),
           ),
-          GoRoute(
-            path: '/sensei',
-            builder: (context, state) => const SenseiPage(),
-          ),
+          GoRoute(path: '/sensei', builder: (context, state) => const Sensei()),
           GoRoute(
             path: '/login',
             builder: (context, state) {
@@ -133,7 +131,8 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: '/quiz/:id',
             builder: (context, state) {
-              return ErrorPage(message: 'Quiz not found');
+              final id = int.parse(state.pathParameters['id']!);
+              return QuizPage(quizId: id);
             },
           ),
         ],
@@ -171,13 +170,11 @@ class MainLayout extends StatelessWidget {
     final currentPath =
         GoRouter.of(context).routeInformationProvider.value.uri.toFilePath();
     debugPrint('Current path: $currentPath');
-    final hideNavBar = ['/login', '/signup', '/quiz'].contains(currentPath);
-
     return Scaffold(
       body: Stack(
         children: [
           child,
-          if (!hideNavBar)
+          if (Supabase.instance.client.auth.currentSession != null)
             Positioned(
               left: 0,
               right: 0,

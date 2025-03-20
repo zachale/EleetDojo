@@ -81,10 +81,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _isSubmitting ? null : _resetPassword,
-              child:
-                  _isSubmitting
-                      ? const CircularProgressIndicator()
-                      : const Text('Reset Password'),
+              child: _isSubmitting
+                  ? const CircularProgressIndicator()
+                  : const Text('Reset Password'),
             ),
           ],
         ),

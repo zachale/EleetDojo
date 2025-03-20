@@ -190,9 +190,9 @@ class _DojoPageState extends State<DojoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LeetCode Dojo'),
+        title: const Text('Practice Dojo'),
         backgroundColor: backgroundColor,
-        foregroundColor: primary_color,
+        foregroundColor: Colors.white,
       ),
       body: Stack(
         children: [

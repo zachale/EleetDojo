@@ -16,18 +16,11 @@ class LessonPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-              lessonData['name'],
-              style: const TextStyle(fontSize: 24.0),
-              ),
+              Text(lessonData['name'], style: const TextStyle(fontSize: 24.0)),
               const SizedBox(height: 16),
               Html(
                 data: lessonData['content'],
-                style: {
-                  "*": Style(
-                    fontSize: FontSize.large,
-                  ),
-                },
+                style: {"*": Style(fontSize: FontSize.large)},
               ),
             ],
           ),
