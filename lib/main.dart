@@ -71,7 +71,10 @@ class MyApp extends StatelessWidget {
         },
         routes: [
           GoRoute(path: '/', redirect: (_, __) => '/lessons'),
-          GoRoute(path: '/dojo', builder: (context, state) => const DojoPage()),
+          GoRoute(
+            path: '/dojo',
+            builder: (context, state) => DojoPage(auth_service: auth_service),
+          ),
           GoRoute(
             path: '/sensei',
             builder: (context, state) => const SenseiPage(),
