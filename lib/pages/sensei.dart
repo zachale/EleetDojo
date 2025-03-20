@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 //void main() => runApp(const sensi());
-class sensi extends StatelessWidget {
-  const sensi({super.key});
+class SenseiPage extends StatelessWidget {
+  const SenseiPage({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
