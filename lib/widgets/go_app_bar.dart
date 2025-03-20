@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GoAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-
-  const GoAppBar({super.key, required this.title});
+  final String route;
+  final String name;
+  const GoAppBar({super.key, required this.name, this.route = '/learning-map'});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: Text(name),
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          if (Navigator.canPop(context)) {
-            context.pop();
-          }
+          context.go(route);
         },
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

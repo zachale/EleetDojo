@@ -2,31 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class LessonMapPage extends StatelessWidget {
-  const LessonMapPage({super.key});
+  final dynamic mapData;
+  const LessonMapPage({super.key, required this.mapData});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> nodes = [
-      {'name': 'Arrays & Hashing', 'id': 1},
-      {'name': 'Two Pointers', 'id': 2},
-      {'name': 'Stack', 'id': 3},
-      {'name': 'Binary Search', 'id': 4},
-      {'name': 'Sliding Window', 'id': 5},
-      {'name': 'Linked List', 'id': 6},
-      {'name': 'Trees', 'id': 7},
-      {'name': 'Tries', 'id': 8},
-      {'name': 'Backtracking', 'id': 9},
-      {'name': 'Heap / Priority Queue', 'id': 10},
-      {'name': 'Graphs', 'id': 11},
-      {'name': '1D Dynamic Programming', 'id': 12},
-      {'name': 'Intervals', 'id': 13},
-      {'name': 'Greedy', 'id': 14},
-      {'name': 'Advanced Graphs', 'id': 15},
-      {'name': '2D Dynamic Programming', 'id': 16},
-      {'name': 'Bit Manipulation', 'id': 17},
-      {'name': 'Math & Geometry', 'id': 18},
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Learning Map'),
@@ -34,13 +14,13 @@ class LessonMapPage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Center(
-          child: buildLearningMap(context, nodes),
+          child: _buildLearningMap(context, mapData),
         ),
       ),
     );
   }
 
-  Widget buildLearningMap(BuildContext context, List<Map<String, dynamic>> nodes) {
+  Widget _buildLearningMap(BuildContext context, List<Map<String, dynamic>> nodes) {
     List<Widget> mapWidgets = [];
     for (int i = 0; i < nodes.length; i++) {
       mapWidgets.add(_buildNode(context, nodes[i]));
@@ -57,7 +37,7 @@ class LessonMapPage extends StatelessWidget {
   Widget _buildNode(BuildContext context, Map<String, dynamic> node) {
     return GestureDetector(
       onTap: () {
-        context.go('/node/${node['id']}');
+        context.go('/learning-map/${node['id']}');
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 16.0),
