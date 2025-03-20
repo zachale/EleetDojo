@@ -65,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(height: 10),
 
             // Logo
-            Image.asset('assets/eleetdojo_logo.png', width: 120),
+            Image.asset('assets/logo.png', width: 120),
 
             const SizedBox(height: 20),
 
