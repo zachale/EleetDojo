@@ -1,3 +1,4 @@
+import 'package:eleetdojo/pages/reset_password.dart';
 import 'package:eleetdojo/pages/dojo_page.dart';
 import 'package:eleetdojo/pages/error_page.dart';
 import 'package:eleetdojo/pages/map_topic_page.dart';
@@ -43,10 +44,23 @@ class MyApp extends StatelessWidget {
     initialLocation: '/learning-map',
     redirect: (BuildContext context, GoRouterState state) {
       // Since loggedIn is hardcoded to true, this condition is never reached
-      final loggedIn = Supabase.instance.client.auth.currentSession != null ||
-          true; // hardcode skip login
+      final loggedIn = Supabase.instance.client.auth.currentSession != null;
       if (!loggedIn) {
         return '/login';
+      }
+
+      // handle deeplinks explicitly
+      final uri = state.uri.toString();
+
+      if (uri.startsWith('eleetdojo://login-callback')) {
+        debugPrint('Login callback deeplink');
+        if (auth_service.getCurrentSession() != null) {
+          return '/learning-map';
+        }
+      } else if (uri.startsWith('eleetdojo://reset-password-callback')) {
+        if (auth_service.getCurrentSession() != null) {
+          return '/reset-password';
+        }
       }
       return null;
     },
@@ -56,14 +70,8 @@ class MyApp extends StatelessWidget {
           return MainLayout(child: child);
         },
         routes: [
-          GoRoute(
-            path: '/',
-            redirect: (_, __) => '/lessons',
-          ),
-          GoRoute(
-            path: '/dojo',
-            builder: (context, state) => const DojoPage(),
-          ),
+          GoRoute(path: '/', redirect: (_, __) => '/lessons'),
+          GoRoute(path: '/dojo', builder: (context, state) => const DojoPage()),
           GoRoute(
             path: '/sensei',
             builder: (context, state) => const SenseiPage(),
@@ -72,6 +80,12 @@ class MyApp extends StatelessWidget {
             path: '/login',
             builder: (context, state) {
               return LoginScreen(auth_service: auth_service);
+            },
+          ),
+          GoRoute(
+            path: '/reset-password',
+            builder: (context, state) {
+              return ForgotPassword(auth_service: auth_service);
             },
           ),
           GoRoute(
@@ -132,10 +146,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: primary_color,
         scaffoldBackgroundColor: backgroundColor,
-        textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.white,
-              displayColor: Colors.white,
-            ),
+        textTheme: Theme.of(
+          context,
+        ).textTheme.apply(bodyColor: Colors.white, displayColor: Colors.white),
         colorScheme: ColorScheme.dark(
           primary: primary_color,
           surface: backgroundColor,

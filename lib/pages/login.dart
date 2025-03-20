@@ -1,4 +1,4 @@
-import 'package:eleetdojo/forgot_password.dart';
+import 'package:eleetdojo/pages/reset_password.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:eleetdojo/main.dart';
@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eleetdojo/pages/signup.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:eleetdojo/auth_service.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   final AuthService auth_service;
@@ -22,52 +23,15 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _restoreSession();
-    _setupAuthListener();
   }
 
-  // Try to restore session after an OAuth redirect
   Future<void> _restoreSession() async {
-    // Ensure the build context is available
     await Future.delayed(Duration.zero);
 
     final session = widget.auth_service.getCurrentSession();
-    if (session != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) =>
-              ProfileScreen(auth_service: widget.auth_service),
-        ),
-      );
+    if (session != null && mounted) {
+      context.go('/learning-map'); // Use GoRouter to navigate
     }
-  }
-
-  // Listen for authentication state changes and go to profile screen on login
-  void _setupAuthListener() {
-    widget.auth_service.onAuthStateChange()?.listen((data) {
-      final event = data.event;
-
-      if (mounted) {
-        if (event == AuthChangeEvent.signedIn) {
-          // Navigate to profile if signed in
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) =>
-                  ProfileScreen(auth_service: widget.auth_service),
-            ),
-          );
-        } else if (event == AuthChangeEvent.signedOut) {
-          debugPrint("User signed out");
-        } else if (event == AuthChangeEvent.passwordRecovery) {
-          // Navigate to profile if signed in
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) =>
-                  ForgotPassword(auth_service: widget.auth_service),
-            ),
-          );
-        }
-      }
-    });
   }
 
   // Process login attempt
@@ -88,29 +52,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Reset Password"),
-        content: TextField(
-          controller: emailController,
-          decoration: const InputDecoration(labelText: "Enter your email"),
-          keyboardType: TextInputType.emailAddress,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Reset Password"),
+            content: TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Enter your email"),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (emailController.text.isNotEmpty) {
+                    await _sendPasswordReset(emailController.text);
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text("Send"),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              if (emailController.text.isNotEmpty) {
-                await _sendPasswordReset(emailController.text);
-              }
-              Navigator.pop(context);
-            },
-            child: const Text("Send"),
-          ),
-        ],
-      ),
     );
   }
 
@@ -143,9 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text(''),
-        backgroundColor: Theme.of(context)
-            .colorScheme
-            .surface, // Match app bar to background
+        backgroundColor:
+            Theme.of(
+              context,
+            ).colorScheme.surface, // Match app bar to background
         elevation: 0,
       ),
       body: LayoutBuilder(
@@ -252,14 +218,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Signup button
                       TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignupScreen(
-                              auth_service: widget.auth_service,
+                        onPressed:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => SignupScreen(
+                                      auth_service: widget.auth_service,
+                                    ),
+                              ),
                             ),
-                          ),
-                        ),
                         child: RichText(
                           text: TextSpan(
                             style: const TextStyle(
