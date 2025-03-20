@@ -34,7 +34,7 @@ class _learningFromSensiScreen extends State<learningFromSensiScreen> {
   Future<void> getSensi(String userQuestion) async {
 
     const geminiAPIKey = 'AIzaSyCSnm9UUWxvbdcYQ2COU-ctEkvnJMDdrbw';
-    const geminiUrlPath = 'APIKEY=$geminiAPIKey';
+    const geminiUrlPath = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$geminiAPIKey';
 
     setState(() {
       _userSensiConversation.add({"role": "user", "text": userQuestion});
