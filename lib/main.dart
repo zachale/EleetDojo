@@ -29,11 +29,19 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  final AuthService auth_service;
+  final SupabaseClient supabase;
+  MyApp({super.key, required this.auth_service, required this.supabase});
 
-  final GoRouter _router = GoRouter(
+  late final GoRouter _router = GoRouter(
     initialLocation: '/learning-map',
     routes: [
+      GoRoute(
+        path: '/login',
+        builder: (context, state) {
+          return LoginScreen(auth_service: auth_service);
+        },
+      ),
       GoRoute(
         path: '/learning-map',
         builder: (context, state) {
@@ -81,21 +89,17 @@ class MyApp extends StatelessWidget {
       ),
     ],
   );
-  final AuthService auth_service;
-  final SupabaseClient supabase;
-
-  const MyApp({super.key, required this.auth_service, required this.supabase});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'eLeetDojo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(auth_service: auth_service),
+      routerConfig: _router,
     );
   }
 }
