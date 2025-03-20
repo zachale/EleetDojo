@@ -1,4 +1,5 @@
 import 'package:eleetdojo/pages/error_page.dart';
+import 'package:eleetdojo/pages/reset_password.dart';
 import 'package:eleetdojo/pages/map_topic_page.dart';
 import 'package:eleetdojo/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,18 @@ class MyApp extends StatelessWidget {
   MyApp({super.key, required this.auth_service, required this.supabase});
 
   late final GoRouter _router = GoRouter(
-    initialLocation: '/learning-map',
+    initialLocation: '/login',
     routes: [
       GoRoute(
         path: '/login',
         builder: (context, state) {
           return LoginScreen(auth_service: auth_service);
+        },
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) {
+          return ForgotPassword(auth_service: auth_service);
         },
       ),
       GoRoute(
@@ -88,6 +95,22 @@ class MyApp extends StatelessWidget {
         },
       ),
     ],
+
+    // handle deeplinks explicitly
+    redirect: (BuildContext context, GoRouterState state) {
+      final uri = state.uri.toString();
+
+      if (uri.startsWith('eleetdojo://login-callback')) {
+        if (auth_service.getCurrentSession() != null) {
+          return '/learning-map';
+        }
+      } else if (uri.startsWith('eleetdojo://reset-password-callback')) {
+        if (auth_service.getCurrentSession() != null) {
+          return '/reset-password';
+        }
+      }
+      return null;
+    },
   );
 
   @override
