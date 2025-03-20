@@ -34,21 +34,21 @@ class LessonMapTopicPage extends StatelessWidget {
               child: ListView.builder(
                 itemCount: lessons.length,
                 itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => context.go('/lesson/${lessons[index]['id']}'),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4.0),
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
+                  return GestureDetector(
+                    onTap: () => context.go('/lesson/${lessons[index]['id']}'),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
                         color: Colors.blue.shade100,
                         borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Text(
+                      ),
+                      child: Text(
                         lessons[index]['name'],
                         style: TextStyle(fontSize: 16.0),
-                        ),
                       ),
-                    );
+                    ),
+                  );
                 },
               ),
             ),
@@ -63,7 +63,11 @@ class LessonMapTopicPage extends StatelessWidget {
                 itemCount: quizzes.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => context.go('/quiz/${quizzes[index]['id']}'),
+                    onTap: () {
+                      final currentLocation = GoRouterState.of(context).path;
+                      context.push('/quiz/${quizzes[index]['id']}',
+                          extra: {'returnPath': currentLocation});
+                    },
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       padding: const EdgeInsets.all(16.0),
