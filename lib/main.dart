@@ -1,4 +1,5 @@
 import 'package:eleetdojo/auth_service.dart';
+import 'package:eleetdojo/pages/dojo_page.dart';
 import 'package:flutter/material.dart';
 import 'package:eleetdojo/pages/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(auth_service: auth_service),
+      home: DojoPage(auth_service: auth_service),
     );
   }
 }
