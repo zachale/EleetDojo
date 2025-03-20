@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.eleetdojo"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -29,6 +29,25 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+
+    // This errors, but app seems to work without it anyways
+    // (Tutorial said to add it)
+    // If some weird error occurs in the future/on non-emulator, this might help fix it
+    
+    // signingConfigs {
+    //     debug {
+    //         keyAlias = "androiddebugkey"
+    //         keyPassword = "android"
+    //         storeFile = file(System.getProperty("user.home") + '/.android/debug.keystore')
+    //         storePassword = "android"
+    //     }
+    //     release {
+    //         keyAlias = "androiddebugkey"
+    //         keyPassword = "android"
+    //         storeFile = file(System.getProperty("user.home") + '/.android/debug.keystore')
+    //         storePassword = "android"
+    //     }
+    // }
 
     buildTypes {
         release {

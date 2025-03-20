@@ -1,27 +1,43 @@
+import 'package:eleetdojo/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'pages/lessons_list_page.dart';
-import 'pages/lesson_page.dart';
-import 'pages/sign_in_page.dart';
-import 'pages/quiz_page.dart';
-import 'pages/dojo_page.dart';
+import 'package:eleetdojo/pages/login.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
-  runApp(MyApp());
+final background_color = Color(0xFF021526);
+const primary_color = Color(0xFF6EA6DA);
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  final supabase = Supabase.instance.client;
+  final auth_service = AuthService(supabase: supabase);
+
+  runApp(MyApp(auth_service: auth_service, supabase: supabase));
 }
 
 class MyApp extends StatelessWidget {
+  final AuthService auth_service;
+  final SupabaseClient supabase;
+
+  const MyApp({super.key, required this.auth_service, required this.supabase});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'eLeetDojo',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => LessonsListPage(),
-        '/lesson': (context) => LessonPage(),
-        '/signin': (context) => SignInPage(),
-        '/quiz': (context) => QuizPage(),
-        '/dojo': (context) => DojoPage(),
-      },
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: LoginScreen(auth_service: auth_service),
     );
   }
 }
