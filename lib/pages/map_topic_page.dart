@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class LessonMapTopicPage extends StatelessWidget {
+  final dynamic topicData;
+  const LessonMapTopicPage({super.key, required this.topicData});
+
+  @override
+  Widget build(BuildContext context) {
+    final lessons = topicData['lessons'];
+    final quizzes = topicData['quizzes'];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(topicData['name']),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/learning-map');
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Lessons',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: lessons.length,
+                itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => context.go('/lesson/${lessons[index]['id']}'),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Text(
+                        lessons[index]['name'],
+                        style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                    );
+                },
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Quizzes',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: quizzes.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () => context.go('/quiz/${quizzes[index]['id']}'),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4.0),
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade100,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        quizzes[index]['name'],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
