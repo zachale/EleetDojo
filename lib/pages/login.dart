@@ -2,7 +2,6 @@ import 'package:eleetdojo/pages/reset_password.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:eleetdojo/main.dart';
-import 'package:eleetdojo/pages/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eleetdojo/pages/signup.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -19,18 +18,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
   @override
   void initState() {
     super.initState();
-    _restoreSession();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    attemptLogIn();
+    _setupAuthListener();
   }
 
-  Future<void> _restoreSession() async {
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> attemptLogIn() async {
     await Future.delayed(Duration.zero);
 
     final session = widget.auth_service.getCurrentSession();
+    debugPrint("Session: $session");
     if (session != null && mounted) {
-      context.go('/learning-map'); // Use GoRouter to navigate
+      context.go('/learning-map');
     }
   }
 
@@ -38,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _processLogin(String user_email, String user_password) async {
     try {
       await widget.auth_service.emailSignIn(user_email, user_password);
+      attemptLogIn();
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -48,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showForgotPasswordDialog(BuildContext context) {
-    final emailController = TextEditingController();
+    final emailResetController = TextEditingController();
 
     showDialog(
       context: context,
@@ -56,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
           (context) => AlertDialog(
             title: const Text("Reset Password"),
             content: TextField(
-              controller: emailController,
+              controller: emailResetController,
               decoration: const InputDecoration(labelText: "Enter your email"),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -67,8 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextButton(
                 onPressed: () async {
-                  if (emailController.text.isNotEmpty) {
-                    await _sendPasswordReset(emailController.text);
+                  if (emailResetController.text.isNotEmpty) {
+                    await _sendPasswordReset(emailResetController.text);
                   }
                   Navigator.pop(context);
                 },
@@ -97,23 +111,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Listen for authentication state changes and go to profile screen on login
+  void _setupAuthListener() {
+    widget.auth_service.onAuthStateChange()?.listen((data) {
+      final event = data.event;
+
+      if (mounted) {
+        if (event == AuthChangeEvent.signedIn) {
+          attemptLogIn();
+        }
+      }
+    });
+  }
+
   // Frontend UI
   @override
   Widget build(BuildContext context) {
-    // Local controllers for email input
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: const Text(''),
-        backgroundColor:
-            Theme.of(
-              context,
-            ).colorScheme.surface, // Match app bar to background
-        elevation: 0,
-      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -123,20 +138,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
-                      // Title
-                      const Text(
+                      Text(
                         'eLeet Dojo',
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 38,
                           fontWeight: FontWeight.bold,
                           color: primary_color,
+                          fontFamily: 'Monospace',
+                          shadows: [
+                            Shadow(blurRadius: 8.0, offset: Offset(3, 3)),
+                          ],
                         ),
                       ),
-
                       const SizedBox(height: 10),
 
                       // Logo
@@ -147,17 +165,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Email field
                       TextField(
                         controller: emailController,
-                        style: TextStyle(
-                          color: primary_color,
-                        ), // Set user typed text color to primary_color
+                        style: const TextStyle(color: primary_color),
                         decoration: InputDecoration(
                           labelText: 'Email',
-                          labelStyle: TextStyle(color: primary_color),
+                          labelStyle: const TextStyle(color: primary_color),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: primary_color),
+                            borderSide: const BorderSide(color: primary_color),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: primary_color,
                               width: 2.0,
                             ),
@@ -172,15 +188,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Password field
                       TextField(
                         controller: passwordController,
-                        style: TextStyle(color: primary_color),
+                        style: const TextStyle(color: primary_color),
                         decoration: InputDecoration(
                           labelText: 'Password',
-                          labelStyle: TextStyle(color: primary_color),
+                          labelStyle: const TextStyle(color: primary_color),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: primary_color),
+                            borderSide: const BorderSide(color: primary_color),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: primary_color,
                               width: 2.0,
                             ),
@@ -188,9 +204,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         obscureText: true,
                         cursorColor: primary_color,
+                        onSubmitted: (value) {
+                          _processLogin(
+                            emailController.text,
+                            passwordController.text,
+                          );
+                        },
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       // Login button
                       ElevatedButton(
@@ -200,34 +222,35 @@ class _LoginScreenState extends State<LoginScreen> {
                             passwordController.text,
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          side: const BorderSide(
+                            width: 2,
+                            color: primary_color,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                         child: const Text('Log In'),
                       ),
 
-                      const SizedBox(height: 0),
-
-                      // Forgot Password button
-                      TextButton(
-                        onPressed: () async {
-                          _showForgotPasswordDialog(context);
-                        },
-                        child: const Text(
-                          "Forgot Password?",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
+                      const SizedBox(height: 16),
 
                       // Signup button
                       TextButton(
-                        onPressed:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => SignupScreen(
-                                      auth_service: widget.auth_service,
-                                    ),
-                              ),
-                            ),
+                        onPressed: () {
+                          if (mounted) {
+                            GoRouter.of(context).go('/signup');
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          minimumSize: const Size(10, 10),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         child: RichText(
                           text: TextSpan(
                             style: const TextStyle(
@@ -248,13 +271,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
+                      // Forgot Password button
+                      TextButton(
+                        onPressed: () async {
+                          _showForgotPasswordDialog(context);
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          minimumSize: const Size(10, 10),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          "Forgot Password?",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+
                       const SizedBox(height: 20),
 
                       // Google sign in button
                       SignInButton(
                         Buttons.Google,
-                        onPressed: () {
-                          widget.auth_service.googleSignIn();
+                        onPressed: () async {
+                          await widget.auth_service.googleSignIn();
+                          attemptLogIn();
                         },
                       ),
 
@@ -263,8 +306,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       // GitHub sign in button
                       SignInButton(
                         Buttons.GitHub,
-                        onPressed: () {
-                          widget.auth_service.githubSignIn();
+                        onPressed: () async {
+                          await widget.auth_service.githubSignIn();
+                          attemptLogIn();
                         },
                       ),
                     ],
