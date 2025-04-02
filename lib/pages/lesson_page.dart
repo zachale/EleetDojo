@@ -9,19 +9,15 @@ class LessonPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GoAppBar(name: lessonData['name']),
+      appBar: GoAppBar(name: ''),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(lessonData['name'], style: const TextStyle(fontSize: 24.0)),
-              const SizedBox(height: 16),
-              Html(
-                data: lessonData['content'],
-                style: {"*": Style(fontSize: FontSize.large)},
-              ),
+              Html(data: lessonData['content']),
+              const SizedBox(height: 80),
             ],
           ),
         ),

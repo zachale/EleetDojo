@@ -92,40 +92,104 @@ class MyApp extends StatelessWidget {
           GoRoute(
             path: '/learning-map',
             builder: (context, state) {
-              final mapData = mockLearningMap;
-              return LessonMapPage(mapData: mapData);
+              return FutureBuilder(
+                future: supabase
+                    .from('topics')
+                    .select()
+                    .order("id", ascending: true),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return ErrorPage(
+                      message: 'Error loading topics: ${snapshot.error}',
+                    );
+                  }
+
+                  final mapData = snapshot.data as List;
+                  return LessonMapPage(mapData: mapData);
+                },
+              );
             },
           ),
           GoRoute(
             path: '/learning-map/:id',
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
-              final topicData = mockTopics.firstWhere(
-                (node) => node['id'] == id,
-                orElse: () => <String, Object>{},
+              return FutureBuilder(
+                future: Future(() async {
+                  // First, fetch the topic from topics table
+                  final topic =
+                      await supabase
+                          .from('topics')
+                          .select()
+                          .eq('id', id)
+                          .single();
+
+                  // Extract lesson IDs from the topic
+                  final lessonIds = List<dynamic>.from(topic['lessons'] ?? []);
+                  print(lessonIds);
+
+                  // Fetch all lessons using the lesson IDs
+                  List lessons = [];
+                  if (lessonIds.isNotEmpty) {
+                    lessons = await supabase
+                        .from('lessons')
+                        .select()
+                        .inFilter('id', lessonIds)
+                        .order('id', ascending: true);
+                  }
+
+                  return {
+                    'name': topic['name'],
+                    'lessons': lessons,
+                    'quizzes': [],
+                  };
+                }),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return ErrorPage(
+                      message: 'Error loading topic: ${snapshot.error}',
+                    );
+                  }
+
+                  final topicData = snapshot.data as Map<String, dynamic>;
+                  return LessonMapTopicPage(topicData: topicData);
+                },
               );
-
-              if (topicData.isEmpty) {
-                return ErrorPage(message: 'Topic not found');
-              }
-
-              return LessonMapTopicPage(topicData: topicData);
             },
           ),
           GoRoute(
             path: '/lesson/:id',
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
-              final lessonData = mockLessons.firstWhere(
-                (lesson) => lesson['id'] == id,
-                orElse: () => <String, Object>{},
+              return FutureBuilder(
+                future: supabase.from('lessons').select().eq('id', id).single(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return ErrorPage(
+                      message: 'Error loading lesson: ${snapshot.error}',
+                    );
+                  }
+
+                  if (snapshot.data == null) {
+                    return ErrorPage(message: 'Lesson not found');
+                  }
+
+                  final lessonData = snapshot.data as Map<String, dynamic>;
+                  return LessonPage(lessonData: lessonData);
+                },
               );
-
-              if (lessonData.isEmpty) {
-                return ErrorPage(message: 'Lesson not found');
-              }
-
-              return LessonPage(lessonData: lessonData);
             },
           ),
           GoRoute(
@@ -181,13 +245,12 @@ class MainLayout extends StatelessWidget {
       body: Stack(
         children: [
           child,
-          if (Supabase.instance.client.auth.currentSession != null)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: AppNavigationBar(currentPath: currentPath),
-            ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AppNavigationBar(currentPath: currentPath),
+          ),
         ],
       ),
     );
