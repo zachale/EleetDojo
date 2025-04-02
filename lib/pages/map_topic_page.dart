@@ -66,7 +66,7 @@ class LessonMapTopicPage extends StatelessWidget {
                     onTap: () {
                       final currentLocation = GoRouterState.of(context).path;
                       context.push(
-                        '/quiz/${quizzes[index]['id']}',
+                        '/prequiz/${quizzes[index]['id']}',
                         extra: {'returnPath': currentLocation},
                       );
                     },
