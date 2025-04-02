@@ -1,3 +1,4 @@
+import 'package:eleetdojo/pages/pre_quiz_page.dart';
 import 'package:eleetdojo/pages/reset_password.dart';
 import 'package:eleetdojo/pages/dojo_page.dart';
 import 'package:eleetdojo/pages/error_page.dart';
@@ -64,7 +65,7 @@ class MyApp extends StatelessWidget {
           return MainLayout(child: child);
         },
         routes: [
-          GoRoute(path: '/', redirect: (_, __) => '/lessons'),
+          GoRoute(path: '/', redirect: (_, __) => '/learning-map'),
           GoRoute(
             path: '/dojo',
             builder: (context, state) => DojoPage(auth_service: auth_service),
@@ -132,6 +133,13 @@ class MyApp extends StatelessWidget {
             builder: (context, state) {
               final id = int.parse(state.pathParameters['id']!);
               return QuizPage(quizId: id);
+            },
+          ),
+          GoRoute(
+            path: '/prequiz/:id',
+            builder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return PreQuizPage(questionId: id);
             },
           ),
         ],
