@@ -45,7 +45,7 @@ class LessonMapTopicPage extends StatelessWidget {
                       ),
                       child: Text(
                         lessons[index]['name'],
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(fontSize: 16.0, color: Colors.black),
                       ),
                     ),
                   );
@@ -65,8 +65,10 @@ class LessonMapTopicPage extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       final currentLocation = GoRouterState.of(context).path;
-                      context.push('/quiz/${quizzes[index]['id']}',
-                          extra: {'returnPath': currentLocation});
+                      context.push(
+                        '/quiz/${quizzes[index]['id']}',
+                        extra: {'returnPath': currentLocation},
+                      );
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -77,7 +79,7 @@ class LessonMapTopicPage extends StatelessWidget {
                       ),
                       child: Text(
                         quizzes[index]['name'],
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(fontSize: 16.0, color: Colors.black),
                       ),
                     ),
                   );

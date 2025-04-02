@@ -6,6 +6,7 @@ import 'package:eleetdojo/auth_service.dart';
 import 'package:eleetdojo/pages/login.dart';
 import 'package:eleetdojo/pages/quiz_page.dart';
 import 'package:eleetdojo/pages/sensei.dart';
+import 'package:eleetdojo/pages/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'mock_data.dart'; // Import mock data
@@ -42,14 +43,8 @@ class MyApp extends StatelessWidget {
   MyApp({super.key, required this.auth_service, required this.supabase});
 
   late final GoRouter router = GoRouter(
-    initialLocation: '/learning-map',
+    initialLocation: '/login',
     redirect: (BuildContext context, GoRouterState state) {
-      // Since loggedIn is hardcoded to true, this condition is never reached
-      final loggedIn = Supabase.instance.client.auth.currentSession != null;
-      if (!loggedIn) {
-        return '/login';
-      }
-
       // handle deeplinks explicitly
       final uri = state.uri.toString();
 
@@ -59,9 +54,7 @@ class MyApp extends StatelessWidget {
           return '/learning-map';
         }
       } else if (uri.startsWith('eleetdojo://reset-password-callback')) {
-        if (auth_service.getCurrentSession() != null) {
-          return '/reset-password';
-        }
+        return '/reset-password';
       }
       return null;
     },
@@ -81,6 +74,12 @@ class MyApp extends StatelessWidget {
             path: '/login',
             builder: (context, state) {
               return LoginScreen(auth_service: auth_service);
+            },
+          ),
+          GoRoute(
+            path: '/signup',
+            builder: (context, state) {
+              return SignupScreen(auth_service: auth_service);
             },
           ),
           GoRoute(
@@ -168,7 +167,7 @@ class MainLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentPath =
-        GoRouter.of(context).routeInformationProvider.value.uri.toFilePath();
+        GoRouter.of(context).routeInformationProvider.value.uri.path;
     debugPrint('Current path: $currentPath');
     return Scaffold(
       body: Stack(

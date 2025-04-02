@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:eleetdojo/pages/login.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:eleetdojo/auth_service.dart';
 
@@ -33,15 +34,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       await widget.auth_service.signOut();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password updated! Please log in.')),
+        const SnackBar(
+          content: Text('Password updated! Please log in.'),
+          backgroundColor: Colors.green,
+        ),
       );
 
       // Navigate to login screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(auth_service: widget.auth_service),
-        ),
-      );
+      if (mounted) {
+        context.go('/login');
+      }
     } catch (error) {
       setState(() {
         _errorMessage = error.toString();
@@ -81,9 +83,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _isSubmitting ? null : _resetPassword,
-              child: _isSubmitting
-                  ? const CircularProgressIndicator()
-                  : const Text('Reset Password'),
+              child:
+                  _isSubmitting
+                      ? const CircularProgressIndicator()
+                      : const Text('Reset Password'),
             ),
           ],
         ),
