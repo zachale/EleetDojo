@@ -1,34 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// Mock data
-final mockQuizzes = [
-  {
-    'id': 1,
-    'name': 'Array Basics Quiz',
-    'questionIds': [1, 2],
-  },
-  {
-    'id': 2,
-    'name': 'Array Advanced Quiz',
-    'questionIds': [2],
-  },
-];
-
-final mockQuestions = [
-  {
-    'question': 'What is an array?',
-    'options': ['A', 'B', 'C'],
-    'answer': 'A',
-    'id': 1,
-  },
-  {
-    'question': 'How do you reverse an array?',
-    'options': ['A', 'B', 'C'],
-    'answer': 'B',
-    'id': 2,
-  },
-];
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class QuizPage extends StatefulWidget {
   final int quizId;
@@ -43,8 +15,10 @@ class _QuizPageState extends State<QuizPage> {
   int currentQuestionIndex = 0;
   bool questionAnswered = false;
   String? selectedAnswer;
-  late List<Map<String, dynamic>> quizQuestions;
-  late String quizName;
+  List<Map<String, dynamic>> quizQuestions = [];
+  String quizName = '';
+  bool isLoading = true;
+  String? error;
 
   @override
   void initState() {
@@ -52,26 +26,40 @@ class _QuizPageState extends State<QuizPage> {
     loadQuizQuestions();
   }
 
-  void loadQuizQuestions() {
-    final quiz = mockQuizzes.firstWhere(
-      (q) => q['id'] == widget.quizId,
-      orElse: () => {'id': -1, 'name': 'Quiz Not Found', 'questionIds': []},
-    );
+  Future<void> loadQuizQuestions() async {
+    try {
+      setState(() {
+        isLoading = true;
+        error = null;
+      });
 
-    quizName = quiz['name'] as String;
-    final questionIds = quiz['questionIds'] as List;
+      final supabase = Supabase.instance.client;
+      
+      // Fetch questions from edge function
+      final response = await supabase.functions.invoke(
+        'questions',
+        body: {'questionId': widget.quizId},
+      );
 
-    quizQuestions =
-        questionIds
-            .map(
-              (id) => mockQuestions.firstWhere(
-                (q) => q['id'] == id,
-                orElse: () => {'id': -1},
-              ),
-            )
-            .where((q) => q['id'] != -1)
-            .toList()
-            .cast<Map<String, dynamic>>();
+      if (response.status != 200) {
+        throw Exception('Failed to load questions');
+      }
+
+      final data = response.data;
+      if (data == null || data['questions'] == null) {
+        throw Exception('No questions found');
+      }
+
+      setState(() {
+        quizQuestions = List<Map<String, dynamic>>.from(data['questions']);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+      });
+    }
   }
 
   void checkAnswer(String answer) {
@@ -91,24 +79,59 @@ class _QuizPageState extends State<QuizPage> {
         selectedAnswer = null;
       });
     } else {
-      GoRouter.of(context).pop();
+      context.go("/prequiz/${widget.quizId}");
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text(''),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(error!),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: loadQuizQuestions,
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (quizQuestions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text(quizName)),
-        body: const Center(child: Text('Quiz not found or has no questions')),
+        appBar: AppBar(title: const Text('Quiz')),
+        body: const Center(child: Text('No questions available')),
       );
     }
 
     final currentQuestion = quizQuestions[currentQuestionIndex];
-    final options = currentQuestion['options'] as List;
-    final correctAnswer = currentQuestion['answer'] as String;
-
-    print(questionAnswered);
+    final options = List<String>.from(
+      currentQuestion['answers'].map((a) => a['label'])
+    );
+    final correctAnswerIndex = currentQuestion['answer'] as int;
+    final correctAnswer = options[correctAnswerIndex - 1];
 
     return Scaffold(
       body: SafeArea(
@@ -121,7 +144,7 @@ class _QuizPageState extends State<QuizPage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.go("/prequiz/${widget.quizId}"),
                   ),
                   Expanded(
                     child: LinearProgressIndicator(
