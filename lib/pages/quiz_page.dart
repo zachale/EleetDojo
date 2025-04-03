@@ -258,8 +258,8 @@ class _QuizPageState extends State<QuizPage> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            GoRouter.of(context).go(
-                              '/sensei',
+                            GoRouter.of(context).push(
+                              '/sensei_help',
                               extra: {
                                 'question': currentQuestion['question'],
                                 'answer': correctAnswer,
