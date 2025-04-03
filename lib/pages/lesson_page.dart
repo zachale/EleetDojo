@@ -9,7 +9,7 @@ class LessonPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GoAppBar(name: ''),
+      appBar: GoAppBar(name: '', route: null),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

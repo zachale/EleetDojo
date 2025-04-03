@@ -1,3 +1,4 @@
+import 'package:eleetdojo/widgets/go_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,17 +12,9 @@ class LessonMapTopicPage extends StatelessWidget {
     final quizzes = topicData['quizzes'];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(topicData['name']),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/learning-map');
-          },
-        ),
-      ),
+      appBar: GoAppBar(name: topicData['name']),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 116.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,7 +28,7 @@ class LessonMapTopicPage extends StatelessWidget {
                 itemCount: lessons.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => context.go('/lesson/${lessons[index]['id']}'),
+                    onTap: () => context.push('/lesson/${lessons[index]['id']}'),
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       padding: const EdgeInsets.all(16.0),
@@ -63,13 +56,7 @@ class LessonMapTopicPage extends StatelessWidget {
                 itemCount: quizzes.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {
-                      final currentLocation = GoRouterState.of(context).path;
-                      context.push(
-                        '/prequiz/${quizzes[index]['id']}',
-                        extra: {'returnPath': currentLocation},
-                      );
-                    },
+                    onTap: () => context.push('/prequiz/${quizzes[index]['id']}'),
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4.0),
                       padding: const EdgeInsets.all(16.0),

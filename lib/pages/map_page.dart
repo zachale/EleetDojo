@@ -12,7 +12,7 @@ class LessonMapPage extends StatelessWidget {
         title: Text('Learning Map'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 116.0),
         child: Center(
           child: _buildLearningMap(context, mapData),
         ),
