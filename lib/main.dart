@@ -130,7 +130,7 @@ class MyApp extends StatelessWidget {
 
                   // Extract lesson IDs from the topic
                   final lessonIds = List<dynamic>.from(topic['lessons'] ?? []);
-                  print(lessonIds);
+                  debugPrint("Lesson IDs: $lessonIds");
 
                   // Fetch all lessons using the lesson IDs
                   List lessons = [];
@@ -142,10 +142,23 @@ class MyApp extends StatelessWidget {
                         .order('id', ascending: true);
                   }
 
+                  // Extract quiz IDs from the topic
+                  final quizIds = List<dynamic>.from(topic['quizzes'] ?? []);
+                  debugPrint("Quiz IDs: $quizIds");
+
+                  // Fetch all quizzes using the quiz IDs
+                  List quizzes = [];
+                  if (quizIds.isNotEmpty) {
+                    quizzes = await supabase
+                        .from('leetcode')
+                        .select()
+                        .inFilter('id', quizIds);
+                  }
+
                   return {
                     'name': topic['name'],
                     'lessons': lessons,
-                    'quizzes': [],
+                    'quizzes': quizzes,
                   };
                 }),
                 builder: (context, snapshot) {

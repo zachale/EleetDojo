@@ -78,7 +78,28 @@ class _PreQuizPageState extends State<PreQuizPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+      body: Center(
+        child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          FutureBuilder(
+          future: Future.delayed(const Duration(seconds: 3)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+            return const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('Generating new questions...'),
+            );
+            }
+            return const SizedBox.shrink();
+          },
+          ),
+        ],
+        ),
+      ),
+      );
     }
 
     if (error != null) {
@@ -95,7 +116,7 @@ class _PreQuizPageState extends State<PreQuizPage> {
             .toList();
 
     return Scaffold(
-      appBar: GoAppBar(name: 'Question ${widget.questionId}'),
+      appBar: GoAppBar(name: 'Question ${widget.questionId}', route: null),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -144,13 +165,19 @@ class _PreQuizPageState extends State<PreQuizPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Problem Description',
-                        style: Theme.of(context).textTheme.titleLarge,
+                      'Problem Description',
+                      style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 8),
+                      if (data['content'] != null)
                       Html(
                         data: data['content'],
                         style: {"*": Style(fontSize: FontSize.large)},
+                      )
+                      else
+                      Text(
+                        'This is a LeetCode premium question: Some data is unavailable, but the quiz was still generated with the data that is available. Feel free to attempt it!',
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ],
                   ),
@@ -162,7 +189,7 @@ class _PreQuizPageState extends State<PreQuizPage> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go('/quiz/${widget.questionId}');
+                    context.push('/quiz/${widget.questionId}');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,

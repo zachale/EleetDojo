@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GoAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String route;
+  final String? route;
   final String name;
   const GoAppBar({super.key, required this.name, this.route = '/learning-map'});
 
@@ -13,7 +13,12 @@ class GoAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          context.go(route);
+          if (route != null) {
+            debugPrint(route!);
+            context.push(route!);
+          } else {
+            context.pop();
+          }
         },
       ),
     );

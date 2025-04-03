@@ -6,6 +6,7 @@ const GRAPHQL_URL = "https://leetcode.com/graphql"
 interface Question {
   questionFrontendId: string
   titleSlug: string
+  title: string
 }
 
 interface LeetCodeResponse {
@@ -23,6 +24,7 @@ async function getAllQuestions(): Promise<LeetCodeResponse> {
             questions {
                 questionFrontendId
                 titleSlug
+                title
             }
         }
     }
@@ -66,6 +68,7 @@ async function processQuestions(questions: Question[]) {
     return {
       id,
       slug: question.titleSlug,
+      name: question.title,
       questions: null,
       data: null
     }
@@ -77,6 +80,9 @@ Deno.serve(async (req) => {
     const supabaseClient = await initSupabaseClient(req)
     const questions = await getAllQuestions()
     const bulkData = await processQuestions(questions.data.problemsetQuestionListV2.questions)
+
+    // Comment out { onConflict: 'id', ignoreDuplicates: true } if you want to reset the LLM 
+    // questions and/or add a new column!
 
     if (bulkData.length > 0) {
       const { error } = await supabaseClient

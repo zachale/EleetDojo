@@ -79,7 +79,7 @@ class _QuizPageState extends State<QuizPage> {
         selectedAnswer = null;
       });
     } else {
-      context.go("/prequiz/${widget.quizId}");
+      context.pop();
     }
   }
 
@@ -135,8 +135,6 @@ class _QuizPageState extends State<QuizPage> {
     final letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     final correctAnswerLetter = letters[correctAnswerIndex - 1];
 
-    debugPrint("YOOOOO");
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -149,7 +147,7 @@ class _QuizPageState extends State<QuizPage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.close),
-                      onPressed: () => context.go("/prequiz/${widget.quizId}"),
+                      onPressed: () => context.pop(),
                     ),
                     Expanded(
                       child: LinearProgressIndicator(
