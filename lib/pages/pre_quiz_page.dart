@@ -79,26 +79,26 @@ class _PreQuizPageState extends State<PreQuizPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-      body: Center(
-        child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          FutureBuilder(
-          future: Future.delayed(const Duration(seconds: 3)),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-            return const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text('Generating new questions...'),
-            );
-            }
-            return const SizedBox.shrink();
-          },
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              FutureBuilder(
+                future: Future.delayed(const Duration(seconds: 3)),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text('Generating new questions...'),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
-        ],
         ),
-      ),
       );
     }
 
@@ -165,20 +165,23 @@ class _PreQuizPageState extends State<PreQuizPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                      'Problem Description',
-                      style: Theme.of(context).textTheme.titleLarge,
+                        'Problem Description',
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 8),
                       if (data['content'] != null)
-                      Html(
-                        data: data['content'],
-                        style: {"*": Style(fontSize: FontSize.large)},
-                      )
+                        Html(
+                          data: data['content'],
+                          style: {
+                            "*": Style(fontSize: FontSize.large),
+                            "img": Style(width: Width(275.0)),
+                          },
+                        )
                       else
-                      Text(
-                        'This is a LeetCode premium question: Some data is unavailable, but the quiz was still generated with the data that is available. Feel free to attempt it!',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                        Text(
+                          'This is a LeetCode premium question: Some data is unavailable, but the quiz was still generated with the data that is available. Feel free to attempt it!',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                     ],
                   ),
                 ),
