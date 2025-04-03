@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
             builder: (context, state) => DojoPage(auth_service: auth_service),
           ),
           GoRoute(path: '/sensei', builder: (context, state) => const Sensei()),
+          GoRoute(path: '/sensei_help', builder: (context, state) => const Sensei()),
           GoRoute(
             path: '/login',
             builder: (context, state) {
@@ -262,7 +263,9 @@ class MainLayout extends StatelessWidget {
     final bool showNavBar =
         !currentPath.startsWith('/login') &&
         !currentPath.startsWith('/signup') &&
-        !currentPath.startsWith('/reset-password');
+        !currentPath.startsWith('/reset-password') &&
+        !currentPath.startsWith('/sensei_help');
+        
 
     return Scaffold(
       body: Stack(
