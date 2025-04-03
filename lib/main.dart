@@ -10,15 +10,12 @@ import 'package:eleetdojo/pages/sensei.dart';
 import 'package:eleetdojo/pages/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'mock_data.dart'; // Import mock data
 import 'pages/map_page.dart';
 import 'pages/lesson_page.dart';
-import 'package:eleetdojo/pages/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'components/app_navigation_bar.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:eleetdojo/pages/settings_page.dart';
 
 final backgroundColor = Color(0xFF021526);
 const primary_color = Color(0xFF6EA6DA);
@@ -87,6 +84,12 @@ class MyApp extends StatelessWidget {
             path: '/reset-password',
             builder: (context, state) {
               return ForgotPassword(auth_service: auth_service);
+            },
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) {
+              return SettingsPage(auth_service: auth_service);
             },
           ),
           GoRoute(
@@ -254,16 +257,24 @@ class MainLayout extends StatelessWidget {
     final currentPath =
         GoRouter.of(context).routeInformationProvider.value.uri.path;
     debugPrint('Current path: $currentPath');
+
+    // Check if we're on login or signup screens
+    final bool showNavBar =
+        !currentPath.startsWith('/login') &&
+        !currentPath.startsWith('/signup') &&
+        !currentPath.startsWith('/reset-password');
+
     return Scaffold(
       body: Stack(
         children: [
           child,
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AppNavigationBar(currentPath: currentPath),
-          ),
+          if (showNavBar)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AppNavigationBar(currentPath: currentPath),
+            ),
         ],
       ),
     );

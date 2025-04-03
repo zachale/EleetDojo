@@ -5,10 +5,8 @@ import 'package:go_router/go_router.dart';
 class AppNavigationBar extends StatelessWidget {
   final String currentPath;
 
-  const AppNavigationBar({
-    Key? key,
-    required this.currentPath,
-  }) : super(key: key);
+  const AppNavigationBar({Key? key, required this.currentPath})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +36,12 @@ class AppNavigationBar extends StatelessWidget {
             "assets/practice_dojo.png",
             "Practice Dojo",
           ),
+          _buildNavItem(context, "/sensei", "assets/sensei.png", "Sensei"),
           _buildNavItem(
             context,
-            "/sensei",
-            "assets/sensei.png",
-            "Sensei",
+            "/settings",
+            "assets/settings.png",
+            "Settings",
           ),
         ],
       ),
@@ -56,18 +55,19 @@ class AppNavigationBar extends StatelessWidget {
     String label,
   ) {
     final bool isSelected = currentPath == path;
+    final double iconSize = 64;
 
     return InkWell(
       onTap: () => context.go(path),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
               iconPath,
-              width: 64,
-              height: 64,
+              width: iconSize,
+              height: iconSize,
               color: isSelected ? primary_color : Colors.grey,
             ),
             const SizedBox(height: 4),

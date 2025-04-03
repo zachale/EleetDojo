@@ -58,4 +58,5 @@ flutter:
     - assets/learning_map.png
     - assets/practice_dojo.png
     - assets/sensei.png
+    - assets/settings.png
     - .env

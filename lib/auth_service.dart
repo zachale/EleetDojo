@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -93,6 +97,38 @@ class AuthService {
       debugPrint('Password reset email sent');
     } catch (error) {
       debugPrint('An error occurred: $error');
+    }
+  }
+
+  // Delete user account
+  Future<void> deleteAccount() async {
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      final token =
+          supabase
+              .auth
+              .currentSession!
+              .accessToken; // Get the token from session
+
+      debugPrint('${dotenv.env['SUPABASE_URL']}/functions/v1/delete-user');
+
+      final response = await http.post(
+        Uri.parse('${dotenv.env['SUPABASE_URL']}/functions/v1/delete-user'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // Add the Authorization header
+        },
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete account: ${response.body}');
+      }
+
+      await signOut();
+      debugPrint('Account successfully deleted');
+    } catch (error) {
+      debugPrint('Error deleting account: $error');
     }
   }
 
