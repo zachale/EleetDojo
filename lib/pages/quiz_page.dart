@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:html/parser.dart' as html;
 
 class QuizPage extends StatefulWidget {
   final int quizId;
@@ -61,6 +62,35 @@ class _QuizPageState extends State<QuizPage> {
       });
     }
   }
+
+  Future<Map<String, dynamic>?> loadLeetCodeData(int questionId) async {
+  try {
+    final supabase = Supabase.instance.client;
+
+    final response = await supabase
+        .from('leetcode')
+        .select("data")
+        .eq('id', questionId)
+        .maybeSingle();
+
+    
+
+    if (response != null && response.isNotEmpty) {
+      
+
+      Map<String, dynamic> data = Map<String, dynamic>.from(response);
+
+      return data;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    print('Error loading data: $e');
+    return null;
+  }
+}
+
+
 
   void checkAnswer(String answer) {
     if (questionAnswered) return;
@@ -257,13 +287,20 @@ class _QuizPageState extends State<QuizPage> {
                           ),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            final leetcodeId = currentQuestion['leetcode_id'];
+                            final leetcodeData = await loadLeetCodeData(leetcodeId);
+
+                            final leetcodeContent = leetcodeData?['data']?['content'] ?? '';
+                            final leetcodeContent2= html.parse(leetcodeContent).documentElement?.text ?? '';
+
                             GoRouter.of(context).push(
                               '/sensei_help',
                               extra: {
                                 'question': currentQuestion['question'],
                                 'answer': correctAnswer,
                                 'selectedAnswer': selectedAnswer,
+                                'leetcodeData': leetcodeContent2,
                               },
                             );
                           },

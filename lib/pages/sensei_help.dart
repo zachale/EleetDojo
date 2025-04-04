@@ -58,13 +58,14 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
       final String question = widget.extraData?['question'] ?? 'No question provided';
       final String correctAnswer = widget.extraData?['answer'] ?? 'Unknown';
       final String userChoice = widget.extraData?['selectedAnswer'] ?? 'No choice made';
+      final String leetcodeContent = widget.extraData?['leetcodeContent'] ?? '';
 
       
-      getSensei("Help me understand this question.", correctAnswer, userChoice, question);
+      getSensei("Help me understand this question.", correctAnswer, userChoice, question, leetcodeContent);
     }
   }
 
-  Future<void> getSensei(String userQuestion, String correctAnswer, String userChoice, String ogQuestion) async {
+  Future<void> getSensei(String userQuestion, String correctAnswer, String userChoice, String ogQuestion, String leetcodeContent) async {
     const geminiAPIKey = 'AIzaSyCSnm9UUWxvbdcYQ2COU-ctEkvnJMDdrbw';
     const geminiUrlPath =
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$geminiAPIKey';
@@ -77,7 +78,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
     String contextText = "You are a chatbot called Sensei, your task is to help users with their questions.";
     if (ogQuestion != "No question provided")
     {
-      contextText = "Your are a chatbot called Sensei that helps users understand why their quiz answer was wrong or why it was right. You will be given the Problem question, the correct answer and the users answer. It is your job to help the user understand why they got the answer wrong or right. The follwing is the context. Problem Question: $ogQuestion. The correct answer is: $correctAnswer. The user selected: $userChoice.";
+      contextText = "Your are a chatbot called Sensei that helps users understand why their quiz answer was wrong. Your will be given the main problem, the current problem question, the correct answer and the users answer. It is your job to help the user understand why they got the answer wrong. The follwing is the context. Main Problem: $leetcodeContent Question: $ogQuestion. The correct answer is: $correctAnswer. The user selected: $userChoice.";
     }
     
 
@@ -116,6 +117,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
     final String question = widget.extraData?['question'] ?? 'No question provided';
     final String correctAnswer = widget.extraData?['answer'] ?? 'Unknown';
     final String userChoice = widget.extraData?['selectedAnswer'] ?? 'No choice made';
+    final String leetcodeContent = widget.extraData?['leetcodeData'] ?? '';
 
     return Column(
       children: [
@@ -158,7 +160,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
                 icon: const Icon(Icons.send),
                 onPressed: () {
                   if (_controller.text.isNotEmpty) {
-                    getSensei(_controller.text, correctAnswer, userChoice, question);
+                    getSensei(_controller.text, correctAnswer, userChoice, question, leetcodeContent);
                     _controller.clear();
                   }
                 },
