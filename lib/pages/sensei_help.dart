@@ -58,7 +58,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
       final String question = widget.extraData?['question'] ?? 'No question provided';
       final String correctAnswer = widget.extraData?['answer'] ?? 'Unknown';
       final String userChoice = widget.extraData?['selectedAnswer'] ?? 'No choice made';
-      final String leetcodeContent = widget.extraData?['leetcodeContent'] ?? '';
+      final String leetcodeContent = widget.extraData?['leetcodeData'] ?? '';
 
       
       getSensei("Help me understand this question.", correctAnswer, userChoice, question, leetcodeContent);
