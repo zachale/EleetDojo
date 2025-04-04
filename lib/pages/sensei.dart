@@ -59,6 +59,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
       final String correctAnswer = widget.extraData?['answer'] ?? 'Unknown';
       final String userChoice = widget.extraData?['selectedAnswer'] ?? 'No choice made';
       final String leetcodeContent = widget.extraData?['leetcodeData'] ?? '';
+      print("howdy$leetcodeContent");
 
       
       getSensei("Help me understand this question.", correctAnswer, userChoice, question, leetcodeContent);
@@ -78,7 +79,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
     String contextText = "You are a chatbot called Sensei, your task is to help users with their questions.";
     if (ogQuestion != "No question provided")
     {
-      contextText = "Your are a chatbot called Sensei that helps users understand why their quiz answer was wrong. Your will be given the main problem, the current problem question, the correct answer and the users answer. It is your job to help the user understand why they got the answer wrong. The follwing is the context. Main Problem: $leetcodeContent Question: $ogQuestion. The correct answer is: $correctAnswer. The user selected: $userChoice.";
+      contextText = "Your are a chatbot called Sensei that helps users understand why their quiz answer was right or wrong. Your will be given the main problem, the current problem question, the correct answer and the users answer. It is your job to help the user understand why they got the answer wrong or right. The follwing is the context. Main Problem: $leetcodeContent Question: $ogQuestion. The correct answer is: $correctAnswer. The user selected: $userChoice.";
     }
     
 
@@ -118,6 +119,7 @@ class _learningFromSenseiScreen extends State<learningFromSenseiScreen> {
     final String correctAnswer = widget.extraData?['answer'] ?? 'Unknown';
     final String userChoice = widget.extraData?['selectedAnswer'] ?? 'No choice made';
     final String leetcodeContent = widget.extraData?['leetcodeData'] ?? '';
+    print("howdy$leetcodeContent");
 
     return Column(
       children: [
