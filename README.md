@@ -1,16 +1,27 @@
-# eleetdojo
+# Eleet Dojo
 
-A new Flutter project.
+A Flutter-based learning application featuring interactive lessons, quizzes, and a gamified dojo experience with AI sensei guidance.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Interactive learning map with topic progression
+- Quiz-based assessments
+- Dojo practice environment
+- AI sensei assistance
+- User authentication with Google Sign-In
+- Cross-platform support (iOS, Android, Web, Desktop)
 
-A few resources to get you started if this is your first Flutter project:
+## Setup
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**TLDR Setup**
+1. Create `.env` file with Supabase credentials
+2. Run `flutter pub get`
+3. Run `flutter run`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+
+- **Frontend:** Flutter/Dart
+- **Backend:** Supabase
+- **LLM:** Google Gemini 2.5 Flash
+- **Authentication:** Supabase Auth + Google Sign-In
+- **Navigation:** GoRouter
